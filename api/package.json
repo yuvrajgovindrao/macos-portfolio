@@ -1,0 +1,10 @@
+{
+  "name": "macos-portfolio-api",
+  "version": "1.0.0",
+  "description": "Azure Functions API backend for macOS Portfolio Ask AI",
+  "main": "src/functions/*.js",
+  "type": "module",
+  "dependencies": {
+    "@azure/functions": "^4.6.0"
+  }
+}
