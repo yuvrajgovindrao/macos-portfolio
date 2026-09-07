@@ -6,22 +6,26 @@ import {
 	type ReactElement,
 } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import { MermaidDiagram } from './MermaidDiagram';
 
 interface MarkdownViewProps {
 	content?: string;
 	fileUrl?: string;
 	className?: string;
+	variant?: 'document' | 'chat';
 }
 
 /**
- * Renders Markdown content with clean styling and without distracting raw symbols.
- * Supports inline content or fetching from fileUrl (e.g. /files/example.md).
+ * Renders Markdown content with clean, GitHub-flavored styling.
+ * Supports inline content (e.g. Ask AI chat bubbles) or full document preview (Safari markdown reader).
  */
 export const MarkdownView = ({
 	content: initialContent = '',
 	fileUrl,
 	className,
+	variant,
 }: MarkdownViewProps): ReactElement => {
 	const [fetchedContent, setFetchedContent] = useState<string>('');
 	const [prevFileUrl, setPrevFileUrl] = useState<string | undefined>(fileUrl);
@@ -75,7 +79,7 @@ export const MarkdownView = ({
 		return (
 			<div className="flex items-center justify-center py-20 text-xs text-gray-400">
 				<span className="mr-2 inline-block size-3.5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
-				Loading markdown file...
+				Loading markdown document...
 			</div>
 		);
 	}
@@ -97,14 +101,26 @@ export const MarkdownView = ({
 	}
 
 	const rawMarkdown = fileUrl ? fetchedContent : initialContent;
+	const isDocument = variant ? variant === 'document' : Boolean(fileUrl);
 
 	return (
-		<div className={clsx('markdown-content text-sm leading-relaxed', className)}>
+		<div
+			className={clsx(
+				'markdown-content leading-relaxed',
+				isDocument
+					? 'github-markdown-body text-[15px] text-neutral-900 dark:text-neutral-100'
+					: 'text-sm text-neutral-800 dark:text-neutral-200',
+				className,
+			)}
+		>
 			<ReactMarkdown
 				remarkPlugins={[remarkGfm]}
+				rehypePlugins={[rehypeRaw]}
 				components={{
 					p: ({ children }) => (
-						<p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+						<p className={clsx(isDocument ? 'mb-4 leading-relaxed' : 'mb-2 leading-relaxed last:mb-0')}>
+							{children}
+						</p>
 					),
 					strong: ({ children }) => (
 						<strong className="font-semibold text-gray-950 dark:text-white">
@@ -113,38 +129,70 @@ export const MarkdownView = ({
 					),
 					em: ({ children }) => <em className="italic">{children}</em>,
 					ul: ({ children }) => (
-						<ul className="my-1.5 ml-4 list-disc space-y-1 text-inherit">
+						<ul
+							className={clsx(
+								'list-disc text-inherit',
+								isDocument ? 'my-3 ml-6 space-y-1.5' : 'my-1.5 ml-4 space-y-1',
+							)}
+						>
 							{children}
 						</ul>
 					),
 					ol: ({ children }) => (
-						<ol className="my-1.5 ml-4 list-decimal space-y-1 text-inherit">
+						<ol
+							className={clsx(
+								'list-decimal text-inherit',
+								isDocument ? 'my-3 ml-6 space-y-1.5' : 'my-1.5 ml-4 space-y-1',
+							)}
+						>
 							{children}
 						</ol>
 					),
 					li: ({ children }) => (
-						<li className="leading-relaxed pl-0.5">{children}</li>
-					),
-					h1: ({ children }) => (
-						<h3 className="mt-2.5 mb-1 text-base font-bold text-gray-950 dark:text-white">
+						<li className={clsx('leading-relaxed', isDocument ? 'pl-1' : 'pl-0.5')}>
 							{children}
-						</h3>
+						</li>
 					),
-					h2: ({ children }) => (
-						<h4 className="mt-2 mb-1 text-sm font-bold text-gray-950 dark:text-white">
-							{children}
-						</h4>
-					),
-					h3: ({ children }) => (
-						<h5 className="mt-1.5 mb-0.5 text-xs font-bold uppercase tracking-wide text-gray-950 dark:text-white">
-							{children}
-						</h5>
-					),
-					h4: ({ children }) => (
-						<h6 className="mt-1.5 mb-0.5 text-xs font-semibold text-gray-950 dark:text-white">
-							{children}
-						</h6>
-					),
+					h1: ({ children }) =>
+						isDocument ? (
+							<h1 className="mt-8 mb-4 border-b border-gray-200/90 pb-2.5 text-2xl sm:text-3xl font-bold tracking-tight text-gray-950 first:mt-0 dark:border-neutral-800 dark:text-white">
+								{children}
+							</h1>
+						) : (
+							<h3 className="mt-2.5 mb-1 text-base font-bold text-gray-950 dark:text-white">
+								{children}
+							</h3>
+						),
+					h2: ({ children }) =>
+						isDocument ? (
+							<h2 className="mt-8 mb-3.5 border-b border-gray-200/80 pb-2 text-xl sm:text-2xl font-bold tracking-tight text-gray-950 dark:border-neutral-800 dark:text-white">
+								{children}
+							</h2>
+						) : (
+							<h4 className="mt-2 mb-1 text-sm font-bold text-gray-950 dark:text-white">
+								{children}
+							</h4>
+						),
+					h3: ({ children }) =>
+						isDocument ? (
+							<h3 className="mt-6 mb-2 text-lg sm:text-xl font-semibold tracking-tight text-gray-950 dark:text-white">
+								{children}
+							</h3>
+						) : (
+							<h5 className="mt-1.5 mb-0.5 text-xs font-bold uppercase tracking-wide text-gray-950 dark:text-white">
+								{children}
+							</h5>
+						),
+					h4: ({ children }) =>
+						isDocument ? (
+							<h4 className="mt-4 mb-2 text-base font-semibold text-gray-950 dark:text-white">
+								{children}
+							</h4>
+						) : (
+							<h6 className="mt-1.5 mb-0.5 text-xs font-semibold text-gray-950 dark:text-white">
+								{children}
+							</h6>
+						),
 					code: ({
 						className: codeClassName,
 						children,
@@ -157,62 +205,156 @@ export const MarkdownView = ({
 						if (isInline) {
 							return (
 								<code
-									className="rounded bg-black/5 dark:bg-white/10 px-1.5 py-0.5 font-mono text-xs font-medium text-blue-600 dark:text-blue-300"
+									className={clsx(
+										'rounded-md font-mono font-medium',
+										isDocument
+											? 'bg-gray-100 dark:bg-neutral-800/80 px-1.5 py-0.5 text-[13px] text-pink-600 dark:text-pink-400 border border-gray-200/70 dark:border-neutral-700/60'
+											: 'bg-black/5 dark:bg-white/10 px-1.5 py-0.5 text-xs text-blue-600 dark:text-blue-300',
+									)}
 									{...props}
 								>
 									{children}
 								</code>
 							);
 						}
+
+						const rawCode = Array.isArray(children)
+							? children
+									.map((c) => (typeof c === 'string' ? c : ''))
+									.join('')
+							: String(children ?? '').replace(/\n$/, '');
+
+						const isMermaid =
+							codeClassName === 'language-mermaid' ||
+							Boolean(codeClassName?.includes('mermaid')) ||
+							rawCode.trimStart().startsWith('flowchart ') ||
+							rawCode.trimStart().startsWith('graph ') ||
+							rawCode.trimStart().startsWith('sequenceDiagram');
+
+						if (isMermaid) {
+							return <MermaidDiagram chart={rawCode} />;
+						}
+
 						return (
-							<code
+							<pre
 								className={clsx(
-									'block overflow-x-auto rounded-lg bg-neutral-900 p-2.5 font-mono text-xs text-neutral-100 my-2',
-									codeClassName,
+									'my-3 block overflow-x-auto rounded-xl border border-neutral-800/80 bg-neutral-900 dark:bg-black/95 text-neutral-100 shadow-xs select-text',
+									isDocument ? 'p-4 text-xs sm:text-[13px]' : 'p-3 text-xs',
 								)}
-								{...props}
+								style={{
+									fontFamily:
+										'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+									lineHeight: 1.35,
+									tabSize: 2,
+								}}
 							>
-								{children}
-							</code>
+								<code
+									className={clsx(
+										'block whitespace-pre font-mono',
+										codeClassName,
+									)}
+									style={{
+										fontFamily: 'inherit',
+										lineHeight: 'inherit',
+									}}
+									{...props}
+								>
+									{children}
+								</code>
+							</pre>
 						);
 					},
-					pre: ({ children }) => (
-						<div className="my-1.5 overflow-x-auto">{children}</div>
-					),
+					pre: ({ children }) => <>{children}</>,
 					a: ({ href, children }) => (
 						<a
 							href={href}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:opacity-80 break-all"
+							className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:opacity-80 break-words"
 						>
 							{children}
 						</a>
 					),
+					img: ({ src, alt, ...props }) => (
+						<img
+							src={src}
+							alt={alt ?? ''}
+							className={clsx(
+								'inline-block h-auto align-middle',
+								isDocument ? 'max-w-full rounded-lg my-1' : 'max-w-full rounded',
+							)}
+							loading="lazy"
+							{...props}
+						/>
+					),
 					blockquote: ({ children }) => (
-						<blockquote className="my-1.5 border-l-2 border-blue-500 pl-3 italic text-gray-600 dark:text-gray-300">
+						<blockquote
+							className={clsx(
+								'border-l-4 italic my-3',
+								isDocument
+									? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 px-4 py-2.5 rounded-r-lg text-neutral-700 dark:text-neutral-300'
+									: 'border-blue-500 pl-3 text-gray-600 dark:text-gray-300',
+							)}
+						>
 							{children}
 						</blockquote>
 					),
 					table: ({ children }) => (
-						<div className="my-2 overflow-x-auto">
-							<table className="min-w-full text-xs border border-gray-200 dark:border-neutral-700 divide-y divide-gray-200 dark:divide-neutral-700">
+						<div
+							className={clsx(
+								'my-4 overflow-x-auto',
+								isDocument
+									? 'rounded-lg border border-gray-200 dark:border-neutral-700 shadow-xs'
+									: 'border border-gray-200 dark:border-neutral-700',
+							)}
+						>
+							<table className="min-w-full text-left text-xs sm:text-sm border-collapse divide-y divide-gray-200 dark:divide-neutral-700">
 								{children}
 							</table>
 						</div>
 					),
 					th: ({ children }) => (
-						<th className="px-2 py-1 bg-gray-100 dark:bg-neutral-800 text-left font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-neutral-700">
+						<th
+							className={clsx(
+								'font-semibold text-gray-950 dark:text-white border-b border-gray-200 dark:border-neutral-700',
+								isDocument
+									? 'bg-gray-50 dark:bg-neutral-800/90 px-4 py-2.5 text-xs sm:text-sm'
+									: 'bg-gray-100 dark:bg-neutral-800 px-2 py-1',
+							)}
+						>
 							{children}
 						</th>
 					),
 					td: ({ children }) => (
-						<td className="px-2 py-1 text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-700">
+						<td
+							className={clsx(
+								'text-gray-800 dark:text-gray-200 border-b border-gray-200/80 dark:border-neutral-800/80',
+								isDocument ? 'px-4 py-2.5 text-xs sm:text-sm' : 'px-2 py-1',
+							)}
+						>
 							{children}
 						</td>
 					),
+					tr: ({ children }) => (
+						<tr
+							className={clsx(
+								isDocument
+									? 'odd:bg-white even:bg-gray-50/60 dark:odd:bg-neutral-900 dark:even:bg-neutral-800/40 transition-colors hover:bg-blue-50/30 dark:hover:bg-neutral-800/60'
+									: '',
+							)}
+						>
+							{children}
+						</tr>
+					),
 					hr: () => (
-						<hr className="my-2 border-gray-200 dark:border-neutral-700" />
+						<hr
+							className={clsx(
+								'border-0 h-px',
+								isDocument
+									? 'my-6 bg-gray-200 dark:bg-neutral-800'
+									: 'my-2 bg-gray-200 dark:bg-neutral-700',
+							)}
+						/>
 					),
 				}}
 			>

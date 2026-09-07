@@ -294,7 +294,7 @@ const Safari = (): ReactElement => {
 
 				{activeMdFile ? (
 					<div className="safari-md-reader flex-1 overflow-y-auto bg-white p-6 sm:p-10 select-text dark:bg-neutral-900">
-						<div className="mx-auto max-w-3xl">
+						<div className="mx-auto max-w-4xl">
 							{/* Document top navigation */}
 							<div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200/80 pb-4 dark:border-neutral-800">
 								<div className="flex items-center gap-2">
@@ -318,7 +318,7 @@ const Safari = (): ReactElement => {
 							</div>
 
 							<div className="safari-markdown-body text-neutral-800 dark:text-neutral-200">
-								<MarkdownView fileUrl={activeMdFile.href} />
+								<MarkdownView fileUrl={activeMdFile.href} variant="document" />
 							</div>
 						</div>
 					</div>

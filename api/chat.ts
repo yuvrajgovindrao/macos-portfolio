@@ -280,7 +280,7 @@ export default async function handler(
 				contents,
 				generationConfig: {
 					temperature: 0.7,
-					maxOutputTokens: 1000,
+					maxOutputTokens: 8192,
 				},
 			};
 
@@ -324,7 +324,13 @@ export default async function handler(
 
 					if (geminiRes.ok) {
 						const data = (await geminiRes.json()) as any;
-						const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+						const text = data?.candidates?.[0]?.content?.parts
+							?.filter(
+								(p: any) =>
+									!p.thought && typeof p.text === 'string',
+							)
+							?.map((p: any) => p.text)
+							?.join('');
 						if (text) {
 							finalReply = text;
 							break;

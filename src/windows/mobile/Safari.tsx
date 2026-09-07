@@ -220,7 +220,7 @@ const MobileSafari = (): ReactElement => {
 					</div>
 
 					<div className="safari-markdown-body text-neutral-800 dark:text-neutral-200">
-						<MarkdownView fileUrl={activeMdFile.href} />
+						<MarkdownView fileUrl={activeMdFile.href} variant="document" />
 					</div>
 				</div>
 			) : (

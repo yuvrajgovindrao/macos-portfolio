@@ -67,6 +67,7 @@ interface ChatRequestBody {
 
 interface GeminiCandidatePart {
 	text?: string;
+	thought?: boolean;
 }
 
 interface GeminiCandidate {
@@ -361,7 +362,7 @@ function geminiChatPlugin(env: Record<string, string | undefined>): Plugin {
 										contents,
 										generationConfig: {
 											temperature: 0.7,
-											maxOutputTokens: 1000,
+											maxOutputTokens: 8192,
 										},
 									};
 
@@ -401,8 +402,15 @@ function geminiChatPlugin(env: Record<string, string | undefined>): Plugin {
 												const data =
 													(await geminiRes.json()) as GeminiApiResponse;
 												const text =
-													data.candidates?.[0]?.content
-														?.parts?.[0]?.text;
+													data.candidates?.[0]?.content?.parts
+														?.filter(
+															(p) =>
+																!p.thought &&
+																typeof p.text ===
+																	'string',
+														)
+														?.map((p) => p.text)
+														?.join('');
 												if (text) {
 													finalReply = text;
 													break;
