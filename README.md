@@ -102,7 +102,7 @@ The portfolio Finder directly presents detailed project case studies written in 
 | **Animation & Drag** | GSAP 3 (GreenSock), `@gsap/react`, GSAP Draggable |
 | **Styling & UI** | Tailwind CSS v4, Lucide Icons, Radix UI |
 | **State Management** | Zustand with Immer middleware |
-| **AI & LLM Backend** | Google Gemini API (`gemini-2.5-flash` with fallback to `gemini-3.5-flash`) |
+| **AI & LLM Backend** | Google Gemini API (`gemini-3.5-flash` with multi-model cascade & Cloudflare AI Gateway proxying) |
 | **Document Processing** | `react-markdown`, `remark-gfm`, `react-pdf`, PDF.js worker |
 | **DevOps & Quality** | ESLint 9 (Flat Config), Prettier, GitHub Actions CI |
 
@@ -112,12 +112,18 @@ The portfolio Finder directly presents detailed project case studies written in 
 
 The portfolio includes an integrated conversational AI ("Ask AI") available directly on the desktop dock.
 
-- **Dual Runtime Support**:
+- **Multi-Runtime Backend Support**:
   - **Local Development**: Built-in Vite middleware proxy (`/api/chat` in `vite.config.ts`) using `loadEnv`.
-  - **Production / Cloud**: Serverless Node function (`api/chat.ts`) deployable on Vercel or Node servers.
-- **Model Fallback**:
-  - Defaults to **`gemini-2.5-flash`** for rapid generation.
-  - Automatically falls back to **`gemini-3.5-flash`** if the primary model reaches quota or is unavailable.
+  - **Production (Vercel / Node)**: Serverless function in `api/chat.ts`.
+  - **Production (Azure Static Web Apps)**: Serverless function in `api/src/functions/chat.js`.
+- **Smart Intent-Based Project Doc Routing**:
+  - Dynamically routes raw Markdown files (`graphrag.md`, `youtuberag.md`, `macos-portfolio.md`) directly from `public/files/` based on visitor query intent.
+  - Zero tokens wasted on greetings or simple contact/bio queries, while providing 100% full technical context when discussing projects.
+- **Resilient Multi-Tier Model Cascade**:
+  - Primary model: **`gemini-3.5-flash`** (configured in `.env` / Azure environment variables).
+  - Cascades automatically in sequence: `gemini-3.5-flash` ➔ `gemini-3.6-flash` ➔ `gemini-3.7-flash` ➔ `gemini-3.5-flash-lite` ➔ `gemini-3.1-flash-lite` ➔ `gemini-flash-latest` ➔ `gemini-flash-lite-latest` to ensure high availability and prevent 429 quota disruptions.
+- **Cloudflare AI Gateway Proxying**:
+  - Supports enterprise AI Gateway routing, caching, and rate limiting via `GEMINI_BASE_URL` and `CF_AIG_TOKEN` headers.
 - **Grounding & System Knowledge**:
   - Grounded strictly on [`src/lib/knowledge.ts`](file:///c:/Users/yuvra/Desktop/macos-portfolio/src/lib/knowledge.ts), ensuring zero hallucination regarding skills, background, and contact details.
 
@@ -128,7 +134,10 @@ The portfolio includes an integrated conversational AI ("Ask AI") available dire
 ```text
 macos-portfolio/
 ├── api/
-│   └── chat.ts                     # Production serverless handler for Gemini AI
+│   ├── chat.ts                     # Vercel / Node serverless handler for Gemini AI
+│   └── src/
+│       └── functions/
+│           └── chat.js             # Azure Static Web Apps serverless handler
 ├── public/
 │   ├── files/
 │   │   ├── Certificate_1.jpg       # AWS Data Engineering Certificate
@@ -194,7 +203,11 @@ cp .env.example .env
 Add your Google Gemini API key:
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.5-flash
+
+# Optional: Cloudflare AI Gateway
+# GEMINI_BASE_URL=https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_name}/google-ai-studio
+# CF_AIG_TOKEN=your_cf_aig_token
 ```
 
 > [!TIP]

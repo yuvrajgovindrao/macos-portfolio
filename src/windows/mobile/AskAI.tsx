@@ -1,6 +1,7 @@
 import { MarkdownView } from '#components';
 import { MobileWindowHeader } from '#components/mobile/WindowHeader';
 import { MobileWindowWrapper } from '#hoc';
+import { RAW_PROJECT_DOCS, routeProjectDocs } from '#lib/knowledge';
 import clsx from 'clsx';
 import { RotateCcw, Send } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent, type ReactElement } from 'react';
@@ -71,10 +72,16 @@ const MobileAskAI = (): ReactElement => {
 				content: m.content,
 			}));
 
+			const relevantDocs = routeProjectDocs(trimmed, RAW_PROJECT_DOCS);
+
 			const res = await fetch('/api/chat', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ message: trimmed, history }),
+				body: JSON.stringify({
+					message: trimmed,
+					history,
+					projectDocs: relevantDocs,
+				}),
 			});
 
 			let reply = '';
