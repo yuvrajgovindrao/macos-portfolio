@@ -25,7 +25,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
 
 const SUGGESTED_PROMPTS = [
 	'🚀 Top projects?',
-	'🧠 AI & RAG skills?',
+	'♿ Front-end & Accessibility?',
 	'💻 Tech stack?',
 	'📬 Contact Yuvraj',
 ];
