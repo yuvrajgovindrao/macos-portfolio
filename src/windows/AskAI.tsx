@@ -17,15 +17,15 @@ const INITIAL_MESSAGES: ChatMessage[] = [
 		id: 'welcome-1',
 		role: 'assistant',
 		content:
-			"Hello! 👋 I'm Yuvraj's personal portfolio AI assistant powered by Google Gemini. Ask me anything about his projects, AI/RAG skills, experience, or how to get in touch!",
+			"Hello! 👋 I'm Yuvraj's personal portfolio AI assistant powered by Google Gemini. Ask me anything about his projects, full-stack & backend skills, experience, or how to get in touch!",
 		timestamp: 'Just now',
 	},
 ];
 
 const SUGGESTED_PROMPTS = [
 	'🚀 Tell me about GraphRAG and YouTubeRAG',
-	'🧠 What is Yuvraj’s AI & RAG expertise?',
-	'💻 What is Yuvraj’s tech stack?',
+	'💻 What is Yuvraj’s software engineering tech stack?',
+	'🛠️ What full-stack products has Yuvraj deployed?',
 	'📬 How can I contact Yuvraj?',
 	'🎓 What is Yuvraj’s education & experience?',
 ];

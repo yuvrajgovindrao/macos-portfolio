@@ -8,7 +8,7 @@
   <br />
 
   <h1>macOS-Inspired Interactive Portfolio</h1>
-  <p><strong>Personal portfolio and interactive desktop operating system experience for Yuvraj Govind Rao — AI Engineer</strong></p>
+  <p><strong>Personal portfolio and interactive desktop operating system experience for Yuvraj Govind Rao — Software Development Engineer</strong></p>
 
   <div>
     <a href="https://yuvrajenv.in"><img src="https://img.shields.io/badge/Live_Site-yuvrajenv.in-007AFF?style=for-the-badge&logo=safari&logoColor=white" alt="Live Site" /></a>
@@ -47,7 +47,7 @@
 
 ## ✨ Introduction
 
-This is a fully interactive, macOS-inspired desktop operating system built entirely in the browser using **React 19**, **TypeScript**, **GSAP**, **Zustand**, and **Tailwind CSS**. It serves as the personal portfolio platform for **Yuvraj Govind Rao**, an AI Engineer specializing in Retrieval-Augmented Generation (RAG), vector databases (PostgreSQL pgvector, Qdrant), and knowledge graph traversal (Neo4j).
+This is a fully interactive, macOS-inspired desktop operating system built entirely in the browser using **React 19**, **TypeScript**, **GSAP**, **Zustand**, and **Tailwind CSS**. It serves as the personal portfolio platform for **Yuvraj Govind Rao**, a Software Development Engineer who designs, builds, and deploys full-stack products end-to-end with REST APIs, SQL/NoSQL databases, and LLM-powered retrieval systems.
 
 The platform recreates a true-to-life desktop experience complete with:
 - Draggable, resizable windows with dynamic focus stacking.

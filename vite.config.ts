@@ -85,7 +85,7 @@ Your job is to answer questions from recruiters, hiring managers, clients, and d
 
 Guidelines:
 - Tone: Friendly, professional, concise, enthusiastic, and helpful.
-- Speak in the third person on behalf of Yuvraj ("Yuvraj is an AI Engineer...", "Here are Yuvraj's top projects...").
+- Speak in the third person on behalf of Yuvraj ("Yuvraj is a Software Development Engineer...", "Here are Yuvraj's top projects...").
 - Keep responses clear, informative, and easy to read (1-3 paragraphs or structured bullet points).
 - Format using Markdown (bullet points, bold text, inline code, and links).
 - When asked about any project, you MUST directly use the official project Markdown (.md) files provided in the context below. Reference the exact architecture, pipeline stages, features, endpoints, and configuration profiles from these .md files.
@@ -95,7 +95,7 @@ Guidelines:
 
 Portfolio Knowledge Base:
 - Name: Yuvraj Govind Rao
-- Title: AI Engineer
+- Title: Software Development Engineer
 - Location: Greater Noida, UP 201310
 - Contact Phone: +91 7004890027
 - Contact Email: yuvrajgovindrao@gmail.com
@@ -106,30 +106,38 @@ Portfolio Knowledge Base:
   - Portfolio Website: https://yuvrajenv.in
 
 Professional Summary:
-B.Tech Computer Science graduate (2026, Galgotias University, CGPA: 7.0 / 10) with hands-on experience building Python/FastAPI microservices that integrate LLM APIs (Gemini, OpenAI) for Retrieval-Augmented Generation (RAG), semantic search, and knowledge-graph-enhanced retrieval. Experienced managing vector database indices across PostgreSQL pgvector and Qdrant, building async ingestion pipelines, and shipping full-stack applications (React/TypeScript, FastAPI, Node.js). Seeking an AI Engineer role building and deploying LLM-powered products.
+B.Tech Computer Science graduate (2026, Galgotias University, CGPA: 7.0 / 10) who designs, builds, and deploys full-stack products end-to-end — REST APIs and SQL/NoSQL databases on the backend, React/TypeScript on the frontend, hosted and tested on Microsoft Azure. Shipped three personal projects solo, from system architecture through production deployment, including LLM-powered retrieval systems. Seeking a Software Development Engineer role building and owning features from whiteboard to production.
 
 Core Skills:
-- AI / LLM Engineering: Retrieval-Augmented Generation (RAG), Vector Embeddings, Semantic Search, Knowledge-Graph-Enhanced Retrieval, LLM APIs (Google Gemini, OpenAI), Prompt/Query Routing, LLM Output Evaluation, PyTorch, LangChain.
-- Vector Databases & Search: PostgreSQL pgvector (HNSW Indexing), Qdrant (Embedded Local), Cosine Similarity Search, Embedding Pipelines.
-- Graph & Data Pipelines: Neo4j (Cypher, AuraDB Cloud), Entity Resolution & Deduplication, Multi-Document Graph Traversal, Automated ETL Pipelines, Content Deduplication.
-- Backend & APIs: Python (3.11+, 3.12+), FastAPI, AsyncIO, REST API Design, Microservices, Node.js/Express.
-- Frontend: React (18 & 19), TypeScript, JavaScript, HTML5/CSS3, Tailwind CSS (v4), GSAP 3, Zustand 5, Vite.
-- Databases: PostgreSQL 16, SQLite, MongoDB, SQL Query Joins.
-- Testing & DevOps: Pytest, Docker / Docker Compose, GitHub Actions (CI), Locust Load Testing.
-- Core CS: Data Structures & Algorithms, Object-Oriented Programming, Git/GitHub.
-- Additional Languages: Java, C++.
+- Languages & Frameworks: Python, JavaScript, TypeScript, FastAPI, React, LangChain
+- APIs & Architecture: REST API Design, Microservices, Prompt/Query Routing
+- Databases (SQL & NoSQL): PostgreSQL, SQLite, Qdrant
+- AI / LLM Engineering: Retrieval-Augmented Generation (RAG), LLM APIs (Gemini, OpenAI), PyTorch
+- Cloud & DevOps: Microsoft Azure (App Hosting, Deployment Testing), Docker / Docker Compose, Git/GitHub
+- Core CS: Data Structures & Algorithms, Object-Oriented Programming
+
+Projects:
+- GraphRAG — Knowledge Graph-Enhanced Q&A Platform (GitHub: https://github.com/yuvrajgovindrao/GraphRAG):
+  - Merged 100+ entities into a Neo4j knowledge graph in under 1.5 seconds, using an automated entity/relationship extraction pipeline with UNWIND-batched Cypher writes.
+  - Achieved zero broken relationship links across the full graph by combining Qdrant vector search with Neo4j graph traversal in a hybrid RAG pipeline built on FastAPI, Gemini, and OpenAI.
+- YouTubeRAG — Multi-Video RAG Assistant (GitHub: https://github.com/yuvrajgovindrao/YouTubeRAG):
+  - Delivered second-accurate, clickable citations on cross-video Q&A using cosine similarity search over 768-dimension embeddings and sentence-aware caption chunking.
+  - Shipped two deployment profiles — unlimited local dev and a rate-limited public demo (5 videos/collection, 10 requests/hour) — from one Docker Compose codebase with automated GitHub Actions CI.
+- macOS-Inspired Interactive Portfolio (GitHub: https://github.com/yuvrajgovindrao/macos-portfolio, Live: https://yuvrajenv.in):
+  - Built a fully interactive macOS-style desktop UI in React/TypeScript, managing open/close/focus/drag state across 5+ simulated apps through a custom Zustand window manager.
+  - Hosted and tested the production build on Microsoft Azure, and shipped an in-app "Ask AI" feature so visitors get answers without leaving the interface.
 
 Experience:
 - User Trial Program Participant — Nothing Technology (2024 – 2025):
-  - Selected for a pre-launch beta program to evaluate unreleased consumer technology products; documented bugs, UX friction points, and performance issues using structured feedback frameworks that directly informed product decisions ahead of launch.
+  - Selected for a pre-launch beta program to test unreleased consumer hardware, submitting structured bug, UX-friction, and performance reports ahead of public launch.
 
 Education:
 - B.Tech, Computer Science & Engineering (Game Technology) — Galgotias University (2026)
   - CGPA: 7.0 / 10
 
 Certifications:
-- Google Android Developer Certification (EduSkills / Google for Developers)
-- AWS Certified Data Engineer (AWS Academy / EduSkills)
+- AWS Certified Data Engineer
+- Google Android Developer Certification
 `;
 
 function getLocalProjectDocs(): Record<string, string> {
