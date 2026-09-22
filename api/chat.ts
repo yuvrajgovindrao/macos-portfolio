@@ -294,12 +294,10 @@ export default async function handler(
 
 			const modelsToTry = [
 				model,
+				'gemini-2.5-flash',
+				'gemini-1.5-flash',
 				'gemini-3.6-flash',
-				'gemini-3.7-flash',
-				'gemini-3.5-flash-lite',
-				'gemini-3.1-flash-lite',
 				'gemini-flash-latest',
-				'gemini-flash-lite-latest',
 			].filter((m, i, arr) => Boolean(m) && arr.indexOf(m) === i);
 
 			let finalReply = '';
@@ -319,7 +317,15 @@ export default async function handler(
 					: `Bearer ${cfToken.trim()}`;
 			}
 
+			const startTime = Date.now();
+			const MAX_TOTAL_MS = 20000;
+			const PER_MODEL_TIMEOUT_MS = 7000;
+
 			for (const m of modelsToTry) {
+				if (Date.now() - startTime > MAX_TOTAL_MS) {
+					break;
+				}
+
 				try {
 					const geminiRes = await fetch(
 						`${baseUrl}/v1beta/models/${m}:generateContent?key=${apiKey}`,
@@ -327,6 +333,7 @@ export default async function handler(
 							method: 'POST',
 							headers: requestHeaders,
 							body: JSON.stringify(payload),
+							signal: AbortSignal.timeout(PER_MODEL_TIMEOUT_MS),
 						},
 					);
 
@@ -344,7 +351,8 @@ export default async function handler(
 							break;
 						}
 					} else {
-						lastErr = await geminiRes.text();
+						const errBody = await geminiRes.text().catch(() => '');
+						lastErr = errBody || `HTTP ${geminiRes.status}`;
 					}
 				} catch (fetchErr) {
 					lastErr = fetchErr;
@@ -356,14 +364,23 @@ export default async function handler(
 				res.setHeader('Content-Type', 'application/json');
 				res.end(JSON.stringify({ reply: finalReply }));
 			} else {
-				res.statusCode = 502;
+				const isOverload =
+					typeof lastErr === 'string' &&
+					(lastErr.includes('503') ||
+						lastErr.includes('high demand') ||
+						lastErr.includes('UNAVAILABLE') ||
+						lastErr.includes('TimeoutError') ||
+						lastErr.includes('aborted'));
+
+				res.statusCode = 503;
 				res.setHeader('Content-Type', 'application/json');
 				res.end(
 					JSON.stringify({
-						error:
-							lastErr !== null
+						error: isOverload
+							? 'Google AI is currently experiencing high demand spikes. Please try again in a few moments.'
+							: (lastErr !== null
 								? `Gemini API Error: ${String(lastErr)}`
-								: 'Failed to generate response from Gemini API.',
+								: 'Failed to generate response from Gemini API.'),
 					}),
 				);
 			}

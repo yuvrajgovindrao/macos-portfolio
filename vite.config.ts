@@ -374,14 +374,32 @@ function geminiChatPlugin(env: Record<string, string | undefined>): Plugin {
 										},
 									};
 
+									const rawBaseUrl =
+										env.GEMINI_BASE_URL ??
+										process.env.GEMINI_BASE_URL;
+									const baseUrl =
+										rawBaseUrl && rawBaseUrl.length > 0
+											? rawBaseUrl.replace(/\/+$/, '')
+											: 'https://generativelanguage.googleapis.com';
+
+									const cfToken =
+										env.CF_AIG_TOKEN ??
+										process.env.CF_AIG_TOKEN;
+									const requestHeaders: Record<string, string> = {
+										'Content-Type': 'application/json',
+									};
+									if (cfToken && cfToken.trim().length > 0) {
+										requestHeaders['cf-aig-authorization'] = cfToken.startsWith('Bearer ')
+											? cfToken.trim()
+											: `Bearer ${cfToken.trim()}`;
+									}
+
 									const modelsToTry = [
 										model,
+										'gemini-2.5-flash',
+										'gemini-1.5-flash',
 										'gemini-3.6-flash',
-										'gemini-3.7-flash',
-										'gemini-3.5-flash-lite',
-										'gemini-3.1-flash-lite',
 										'gemini-flash-latest',
-										'gemini-flash-lite-latest',
 									].filter(
 										(m, idx, arr) =>
 											Boolean(m) && arr.indexOf(m) === idx,
@@ -389,20 +407,25 @@ function geminiChatPlugin(env: Record<string, string | undefined>): Plugin {
 
 									let finalReply = '';
 									let lastErr: string | null = null;
+									const startTime = Date.now();
+									const MAX_TOTAL_MS = 20000;
+									const PER_MODEL_TIMEOUT_MS = 7000;
 
 									for (const m of modelsToTry) {
+										if (Date.now() - startTime > MAX_TOTAL_MS) {
+											break;
+										}
+
 										try {
 											const geminiRes = await fetch(
-												`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`,
+												`${baseUrl}/v1beta/models/${m}:generateContent?key=${apiKey}`,
 												{
 													method: 'POST',
-													headers: {
-														'Content-Type':
-															'application/json',
-													},
+													headers: requestHeaders,
 													body: JSON.stringify(
 														payload,
 													),
+													signal: AbortSignal.timeout(PER_MODEL_TIMEOUT_MS),
 												},
 											);
 
@@ -424,8 +447,8 @@ function geminiChatPlugin(env: Record<string, string | undefined>): Plugin {
 													break;
 												}
 											} else {
-												lastErr =
-													await geminiRes.text();
+												const errBody = await geminiRes.text().catch(() => '');
+												lastErr = errBody || `HTTP ${geminiRes.status}`;
 											}
 										} catch (fetchErr) {
 											lastErr =
@@ -447,17 +470,26 @@ function geminiChatPlugin(env: Record<string, string | undefined>): Plugin {
 											}),
 										);
 									} else {
-										res.statusCode = 502;
+										const isOverload =
+											typeof lastErr === 'string' &&
+											(lastErr.includes('503') ||
+												lastErr.includes('high demand') ||
+												lastErr.includes('UNAVAILABLE') ||
+												lastErr.includes('TimeoutError') ||
+												lastErr.includes('aborted'));
+
+										res.statusCode = 503;
 										res.setHeader(
 											'Content-Type',
 											'application/json',
 										);
 										res.end(
 											JSON.stringify({
-												error:
-													lastErr !== null
+												error: isOverload
+													? 'Google AI is currently experiencing high demand spikes. Please try again in a few moments.'
+													: (lastErr !== null
 														? `Gemini API Error: ${lastErr}`
-														: 'Failed to generate response from Gemini API.',
+														: 'Failed to generate response from Gemini API.'),
 											}),
 										);
 									}
