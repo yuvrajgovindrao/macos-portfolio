@@ -85,8 +85,9 @@ const MobileAskAI = (): ReactElement => {
 			});
 
 			let reply = '';
+			const rawText = await res.text().catch(() => '');
 			try {
-				const data = (await res.json()) as {
+				const data = JSON.parse(rawText) as {
 					reply?: string | null;
 					error?: string | null;
 				};
@@ -98,8 +99,15 @@ const MobileAskAI = (): ReactElement => {
 						`Backend returned status ${res.status}. Please check your backend configuration.`;
 				}
 			} catch {
-				const rawText = await res.text().catch(() => '');
-				reply = `Backend error (${res.status}): ${rawText || 'Empty response from /api/chat. Please ensure backend functions are running.'}`;
+				if (rawText.includes('Backend call failure')) {
+					reply =
+						'The AI service is currently experiencing high demand and timed out. Please try asking your question again in a moment!';
+				} else if (res.status === 503) {
+					reply =
+						'Google AI is currently experiencing high traffic. Please wait a few seconds and try again!';
+				} else {
+					reply = `Backend error (${res.status}): ${rawText || 'Empty response from /api/chat. Please ensure backend functions are running.'}`;
+				}
 			}
 
 			const botMsg: ChatMessage = {
