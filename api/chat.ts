@@ -314,13 +314,18 @@ export default async function handler(
 			}
 
 			const startTime = Date.now();
-			const MAX_TOTAL_MS = 20000;
-			const PER_MODEL_TIMEOUT_MS = 7000;
+			const MAX_TOTAL_MS = 22000;
+			const PRIMARY_MODEL_TIMEOUT_MS = 12000;
+			const FALLBACK_MODEL_TIMEOUT_MS = 5000;
 
-			for (const m of modelsToTry) {
+			for (let i = 0; i < modelsToTry.length; i++) {
+				const m = modelsToTry[i];
 				if (Date.now() - startTime > MAX_TOTAL_MS) {
 					break;
 				}
+
+				const perModelTimeout =
+					i === 0 ? PRIMARY_MODEL_TIMEOUT_MS : FALLBACK_MODEL_TIMEOUT_MS;
 
 				try {
 					const geminiRes = await fetch(
@@ -329,7 +334,7 @@ export default async function handler(
 							method: 'POST',
 							headers: requestHeaders,
 							body: JSON.stringify(payload),
-							signal: AbortSignal.timeout(PER_MODEL_TIMEOUT_MS),
+							signal: AbortSignal.timeout(perModelTimeout),
 						},
 					);
 
