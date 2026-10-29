@@ -31,21 +31,21 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-1. [✨ Introduction](#-introduction)
-2. [🚀 Featured Projects Showcase](#-featured-projects-showcase)
-3. [🔋 Key Features](#-key-features)
-4. [⚙️ Tech Stack](#️-tech-stack)
-5. [🤖 Ask AI Architecture (Google Gemini)](#-ask-ai-architecture-google-gemini)
-6. [📁 Project Structure](#-project-structure)
-7. [🤸 Quick Start & Local Setup](#-quick-start--local-setup)
-8. [🛡️ Code Quality & Verification](#️-code-quality--verification)
-9. [📬 Contact & Connect](#-contact--connect)
+1. [Introduction](#introduction)
+2. [Featured Projects Showcase](#featured-projects-showcase)
+3. [Key Features](#key-features)
+4. [Tech Stack](#tech-stack)
+5. [Ask AI Architecture (Google Gemini)](#ask-ai-architecture-google-gemini)
+6. [Project Structure](#project-structure)
+7. [Quick Start & Local Setup](#quick-start--local-setup)
+8. [Code Quality & Verification](#code-quality--verification)
+9. [Contact & Connect](#contact--connect)
 
 ---
 
-## ✨ Introduction
+## Introduction
 
 This is a fully interactive, macOS-inspired desktop operating system built entirely in the browser using **React 19**, **TypeScript**, **GSAP**, **Zustand**, and **Tailwind CSS**. It serves as the personal portfolio platform for **Yuvraj Govind Rao**, a Software Development Engineer who designs, builds, and deploys full-stack products end-to-end with REST APIs, SQL/NoSQL databases, and LLM-powered retrieval systems.
 
@@ -58,7 +58,7 @@ The platform recreates a true-to-life desktop experience complete with:
 
 ---
 
-## 🚀 Featured Projects Showcase
+## Featured Projects Showcase
 
 The portfolio Finder directly presents detailed project case studies written in pure Markdown and rendered directly in Safari:
 
@@ -79,22 +79,22 @@ The portfolio Finder directly presents detailed project case studies written in 
 
 ---
 
-## 🔋 Key Features
+## Key Features
 
-- 🖥️ **macOS Window Management**: Realistic window stacking (`zIndex`), minimize, maximize, and smooth drag physics powered by GSAP.
-- 🤖 **"Ask AI" Assistant**: Conversational dock app backed by Google Gemini that answers visitor questions about Yuvraj's background, skills, and projects with Markdown rendering and AI chat badges.
-- 🧭 **Safari Markdown Reader**: Reads `.md` files dynamically from `public/files/` via clean `href` links, updating the simulated address bar (`https://yuvrajenv.in/files/...`) without hardcoded card wrappers.
-- 💻 **Terminal System**: Custom command-line interface highlighting categorized core engineering skills (AI/LLMs, Vector DBs, Graph Pipelines, Backend, Frontend, Testing, Core CS) with clean wrapping and load statistics.
-- 🖼️ **Certifications Viewer (Photos)**: Displays verified credentials including:
+- **macOS Window Management**: Realistic window stacking (`zIndex`), minimize, maximize, and smooth drag physics powered by GSAP.
+- **"Ask AI" Assistant**: Conversational dock app backed by Google Gemini that answers visitor questions about Yuvraj's background, skills, and projects with Markdown rendering and AI chat badges.
+- **Safari Markdown Reader**: Reads `.md` files dynamically from `public/files/` via clean `href` links, updating the simulated address bar (`https://yuvrajenv.in/files/...`) without hardcoded card wrappers.
+- **Terminal System**: Custom command-line interface highlighting categorized core engineering skills (AI/LLMs, Vector DBs, Graph Pipelines, Backend, Frontend, Testing, Core CS) with clean wrapping and load statistics.
+- **Certifications Viewer (Photos)**: Displays verified credentials including:
   - **Android Developer Virtual Internship** (Google for Developers / EduSkills)
   - **Data Engineering Virtual Internship** (AWS Academy / EduSkills)
-- 📄 **Interactive PDF Resume**: Embedded PDF viewer with multi-page rendering, zoom scaling, and direct download action.
-- 📱 **Adaptive iOS Mobile Interface**: Responsive design automatically switches from desktop windows to a full-screen iOS-style mobile app flow on small screens.
-- 🌗 **System-Wide Dark Mode**: Polished light and dark theme with smooth color transitions.
+- **Interactive PDF Resume**: Embedded PDF viewer with multi-page rendering, zoom scaling, and direct download action.
+- **Adaptive iOS Mobile Interface**: Responsive design automatically switches from desktop windows to a full-screen iOS-style mobile app flow on small screens.
+- **System-Wide Dark Mode**: Polished light and dark theme with smooth color transitions.
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 | Domain | Technologies |
 | :--- | :--- |
@@ -102,13 +102,13 @@ The portfolio Finder directly presents detailed project case studies written in 
 | **Animation & Drag** | GSAP 3 (GreenSock), `@gsap/react`, GSAP Draggable |
 | **Styling & UI** | Tailwind CSS v4, Lucide Icons, Radix UI |
 | **State Management** | Zustand with Immer middleware |
-| **AI & LLM Backend** | Google Gemini API (`gemini-3.5-flash` with multi-model cascade & Cloudflare AI Gateway proxying) |
+| **AI & LLM Backend** | Google Gemini API (`gemini-3.5-flash-lite` primary with `gemini-3.8-flash` fallback & Cloudflare AI Gateway proxying) |
 | **Document Processing** | `react-markdown`, `remark-gfm`, `react-pdf`, PDF.js worker |
 | **DevOps & Quality** | ESLint 9 (Flat Config), Prettier, GitHub Actions CI |
 
 ---
 
-## 🤖 Ask AI Architecture (Google Gemini)
+## Ask AI Architecture (Google Gemini)
 
 The portfolio includes an integrated conversational AI ("Ask AI") available directly on the desktop dock.
 
@@ -119,17 +119,28 @@ The portfolio includes an integrated conversational AI ("Ask AI") available dire
 - **Smart Intent-Based Project Doc Routing**:
   - Dynamically routes raw Markdown files (`graphrag.md`, `youtuberag.md`, `macos-portfolio.md`) directly from `public/files/` based on visitor query intent.
   - Zero tokens wasted on greetings or simple contact/bio queries, while providing 100% full technical context when discussing projects.
-- **Resilient Multi-Tier Model Cascade**:
-  - Primary model: **`gemini-3.5-flash`** (configured in `.env` / Azure environment variables).
-  - Cascades automatically in sequence: `gemini-3.5-flash` ➔ `gemini-3.6-flash` ➔ `gemini-3.7-flash` ➔ `gemini-3.5-flash-lite` ➔ `gemini-3.1-flash-lite` ➔ `gemini-flash-latest` ➔ `gemini-flash-lite-latest` to ensure high availability and prevent 429 quota disruptions.
+- **Dual-Model Resilient Cascade**:
+  - Primary model: **`gemini-3.5-flash-lite`** (fastest response latency and efficient token usage).
+  - Fallback model: **`gemini-3.8-flash`** (high intelligence fallback if rate limits or high demand spikes occur).
 - **Cloudflare AI Gateway Proxying**:
   - Supports enterprise AI Gateway routing, caching, and rate limiting via `GEMINI_BASE_URL` and `CF_AIG_TOKEN` headers.
 - **Grounding & System Knowledge**:
   - Grounded strictly on [`src/lib/knowledge.ts`](file:///c:/Users/yuvra/Desktop/macos-portfolio/src/lib/knowledge.ts), ensuring zero hallucination regarding skills, background, and contact details.
 
+### Dual-Model Fallback Execution Flow
+
+```mermaid
+flowchart LR
+    User["Ask AI Query"] --> Primary["Primary Attempt:\ngemini-3.5-flash-lite\n(Timeout: 12s)"]
+    Primary -->|200 OK| Reply["Return Reply"]
+    Primary -->|Quota 429 / 503 / Timeout| Fallback["Fallback Attempt:\ngemini-3.8-flash\n(Timeout: 5s)"]
+    Fallback -->|200 OK| Reply
+    Fallback -->|Fail| Error["503 High Demand Error"]
+```
+
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 macos-portfolio/
@@ -175,7 +186,7 @@ macos-portfolio/
 
 ---
 
-## 🤸 Quick Start & Local Setup
+## Quick Start & Local Setup
 
 Follow these steps to run the portfolio locally on your machine.
 
@@ -203,7 +214,7 @@ cp .env.example .env
 Add your Google Gemini API key:
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-3.5-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 
 # Optional: Cloudflare AI Gateway
 # GEMINI_BASE_URL=https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_name}/google-ai-studio
@@ -226,7 +237,7 @@ npm run build
 
 ---
 
-## 🛡️ Code Quality & Verification
+## Code Quality & Verification
 
 The codebase adheres to strict TypeScript standards and modern React practices:
 
@@ -244,7 +255,7 @@ The codebase adheres to strict TypeScript standards and modern React practices:
 
 ---
 
-## 📬 Contact & Connect
+## Contact & Connect
 
 - **Name**: Yuvraj Govind Rao
 - **Role**: AI Engineer
@@ -257,5 +268,5 @@ The codebase adheres to strict TypeScript standards and modern React practices:
 ---
 
 <div align="center">
-  <p>Designed and built with ❤️ by <a href="https://github.com/yuvrajgovindrao"><strong>Yuvraj Govind Rao</strong></a></p>
+  <p>Designed and built by <a href="https://github.com/yuvrajgovindrao"><strong>Yuvraj Govind Rao</strong></a></p>
 </div>

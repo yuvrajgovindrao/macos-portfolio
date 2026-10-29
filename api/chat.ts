@@ -244,10 +244,14 @@ export default async function handler(
 
 			const apiKey = process.env.GEMINI_API_KEY;
 			const configuredModel = process.env.GEMINI_MODEL;
-			const model =
-				configuredModel && configuredModel.length > 0
-					? configuredModel
-					: 'gemini-3.5-flash';
+			const primaryModel =
+				configuredModel === 'gemini-3.8-flash'
+					? 'gemini-3.8-flash'
+					: 'gemini-3.5-flash-lite';
+			const fallbackModel =
+				primaryModel === 'gemini-3.5-flash-lite'
+					? 'gemini-3.8-flash'
+					: 'gemini-3.5-flash-lite';
 
 			if (!apiKey) {
 				res.statusCode = 400;
@@ -293,16 +297,9 @@ export default async function handler(
 			};
 
 			const modelsToTry = [
-				model,
-				'gemini-3.8-flash',
-				'gemini-3.7-flash',
-				'gemini-3.6-flash',
-				'gemini-3.5-flash',
-				'gemini-3.5-flash-lite',
-				'gemini-3.1-flash-lite',
-				'gemini-flash-latest',
-				'gemini-flash-lite-latest',
-			].filter((m, i, arr) => Boolean(m) && arr.indexOf(m) === i);
+				primaryModel,
+				fallbackModel,
+			];
 
 			let finalReply = '';
 			let lastErr: unknown = null;
