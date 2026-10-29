@@ -72,7 +72,12 @@ The portfolio Finder directly presents detailed project case studies written in 
 - **Highlights**: Sentence-aware caption chunking preserving second-accurate source timestamps, 768-dimension Gemini embeddings, and dual config-driven Docker Compose profiles.
 - **Repository**: [github.com/yuvrajgovindrao/YouTubeRAG](https://github.com/yuvrajgovindrao/YouTubeRAG)
 
-### 3. **macOS-Inspired Interactive Portfolio**
+### 3. **TeamFlow — Team Task Manager**
+- **Architecture**: Multi-tenant task manager (React, Node.js, Express, PostgreSQL) with relational schema migrations.
+- **Highlights**: Custom auth with bcrypt, OTP signup, stateless JWT sessions, Express middleware RBAC (Admin vs. Member), and multi-assignee task junction tables across 4 versioned SQL migrations.
+- **Repository**: [github.com/yuvrajgovindrao/team-task-manager](https://github.com/yuvrajgovindrao/team-task-manager)
+
+### 4. **macOS-Inspired Interactive Portfolio**
 - **Architecture**: Modular window manager with Zustand + Immer, GSAP draggable physics, and serverless Gemini API chat integration.
 - **Highlights**: Desktop and iOS mobile modes, Markdown reader in Safari, categorized terminal tech stack, and interactive PDF viewer.
 - **Simulated Domain**: [https://yuvrajenv.in](https://yuvrajenv.in)
@@ -86,8 +91,8 @@ The portfolio Finder directly presents detailed project case studies written in 
 - **Safari Markdown Reader**: Reads `.md` files dynamically from `public/files/` via clean `href` links, updating the simulated address bar (`https://yuvrajenv.in/files/...`) without hardcoded card wrappers.
 - **Terminal System**: Custom command-line interface highlighting categorized core engineering skills (AI/LLMs, Vector DBs, Graph Pipelines, Backend, Frontend, Testing, Core CS) with clean wrapping and load statistics.
 - **Certifications Viewer (Photos)**: Displays verified credentials including:
-  - **Android Developer Virtual Internship** (Google for Developers / EduSkills)
-  - **Data Engineering Virtual Internship** (AWS Academy / EduSkills)
+  - **Android Developer Virtual Internship** (Google for Developers / AICTE)
+  - **Data Engineering Virtual Internship** (AWS Academy / AICTE)
 - **Interactive PDF Resume**: Embedded PDF viewer with multi-page rendering, zoom scaling, and direct download action.
 - **Adaptive iOS Mobile Interface**: Responsive design automatically switches from desktop windows to a full-screen iOS-style mobile app flow on small screens.
 - **System-Wide Dark Mode**: Polished light and dark theme with smooth color transitions.
@@ -155,6 +160,7 @@ macos-portfolio/
 │   │   ├── Certificate_2.jpg       # Google Android Developer Certificate
 │   │   ├── graphrag.md             # GraphRAG project case study
 │   │   ├── youtuberag.md           # YouTubeRAG project case study
+│   │   ├── team-task-manager.md    # TeamFlow project case study
 │   │   ├── macos-portfolio.md      # macOS Portfolio project case study
 │   │   └── resume.pdf              # Downloadable resume
 │   ├── icons/                      # System icons (Finder, Ask AI, Wi-Fi, etc.)
